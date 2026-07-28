@@ -35,8 +35,9 @@ let ws = null;
 let currentState = State.IDLE;
 let animFrameId = null;
 
-// ── WebSocket URL ───────────────────────────────────────────────────
-const WS_URL = `ws://${window.location.host}/ws/voice`;
+// ── WebSocket URL (wss:// for HTTPS, ws:// for HTTP) ────────────────
+const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+const WS_URL = `${wsProtocol}//${window.location.host}/ws/voice`;
 
 // ── State Transitions ───────────────────────────────────────────────
 
