@@ -70,7 +70,13 @@ export class AudioPlayer {
         source.connect(this._gainNode);
 
         const now = this._ctx.currentTime;
-        const startTime = Math.max(now, this._nextStartTime);
+        
+        // Jitter buffer management: if queue fallen behind, reset to current time + 30ms buffer head
+        if (this._nextStartTime < now) {
+            this._nextStartTime = now + 0.03;
+        }
+
+        const startTime = this._nextStartTime;
         source.start(startTime);
 
         this._nextStartTime = startTime + audioBuffer.duration;
