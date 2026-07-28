@@ -40,8 +40,17 @@ app.add_middleware(
 )
 
 # ── Paths ────────────────────────────────────────────────────────────
-_project_root = Path(__file__).resolve().parent.parent.parent  # voice-bot-28/
-_frontend_dir = _project_root / "frontend"
+def _get_frontend_dir() -> Path:
+    current = Path(__file__).resolve().parent
+    for _ in range(4):
+        candidate = current / "frontend"
+        if candidate.exists() and (candidate / "index.html").exists():
+            return candidate
+        current = current.parent
+    return Path(__file__).resolve().parent / "frontend"
+
+_frontend_dir = _get_frontend_dir()
+logger.info("Frontend directory resolved to: %s", _frontend_dir)
 
 
 # ── REST endpoints ───────────────────────────────────────────────────
@@ -52,7 +61,7 @@ async def root():
     index_path = _frontend_dir / "index.html"
     if index_path.exists():
         return FileResponse(str(index_path))
-    return {"status": "ok", "message": "Voice Bot API is running"}
+    return {"status": "error", "message": f"index.html not found at {index_path}"}
 
 
 @app.get("/api/status")
