@@ -1,0 +1,688 @@
+/* ================================================================
+   Voice Bot — Premium Dark Theme & Mobile-Optimized Design System
+   ================================================================ */
+
+/* ── CSS Custom Properties ─────────────────────────────────────── */
+:root {
+    /* Colors */
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #12121a;
+    --bg-card: rgba(255, 255, 255, 0.03);
+    --bg-glass: rgba(255, 255, 255, 0.05);
+    --bg-glass-hover: rgba(255, 255, 255, 0.08);
+
+    --text-primary: #f0f0f5;
+    --text-secondary: #8b8b9e;
+    --text-muted: #555568;
+
+    /* Accent Colors */
+    --accent-primary: #6366f1;
+    --accent-primary-glow: rgba(99, 102, 241, 0.4);
+    --accent-listening: #34d399;
+    --accent-listening-glow: rgba(52, 211, 153, 0.4);
+    --accent-speaking: #a78bfa;
+    --accent-speaking-glow: rgba(167, 139, 250, 0.4);
+    --accent-error: #f87171;
+    --accent-connecting: #fbbf24;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+    --gradient-listening: linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
+    --gradient-speaking: linear-gradient(135deg, #7c3aed 0%, #a78bfa 50%, #c4b5fd 100%);
+    --gradient-bg: radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.08) 0%, transparent 60%);
+
+    /* Typography */
+    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-display: 'Outfit', 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+    /* Spacing */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.25rem;
+    --space-xl: 1.75rem;
+    --space-2xl: 2.5rem;
+
+    /* Borders & Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+    --border-subtle: 1px solid rgba(255, 255, 255, 0.06);
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 40px var(--accent-primary-glow);
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-base: 250ms ease;
+    --transition-slow: 400ms ease;
+}
+
+/* ── Reset & Base ──────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    height: 100%;
+}
+
+body {
+    font-family: var(--font-primary);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+}
+
+/* ── Animated Background ───────────────────────────────────────── */
+.bg-gradient {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: var(--gradient-bg);
+    pointer-events: none;
+}
+
+.bg-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+    animation: orbFloat 20s ease-in-out infinite;
+}
+
+.bg-orb--1 {
+    width: 350px;
+    height: 350px;
+    background: var(--accent-primary);
+    top: -100px;
+    left: -100px;
+    animation-delay: 0s;
+}
+
+.bg-orb--2 {
+    width: 280px;
+    height: 280px;
+    background: var(--accent-speaking);
+    bottom: -80px;
+    right: -80px;
+    animation-delay: -7s;
+}
+
+.bg-orb--3 {
+    width: 180px;
+    height: 180px;
+    background: var(--accent-listening);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation-delay: -14s;
+}
+
+@keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(25px, -30px) scale(1.08); }
+    50% { transform: translate(-15px, 15px) scale(0.95); }
+    75% { transform: translate(30px, 20px) scale(1.04); }
+}
+
+/* ── Main Container ────────────────────────────────────────────── */
+.app-container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+    padding: var(--space-lg) var(--space-md);
+    width: 100%;
+    max-width: 540px;
+    margin: auto 0;
+}
+
+/* ── Header ────────────────────────────────────────────────────── */
+.header {
+    text-align: center;
+}
+
+.header__title {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--space-xs);
+}
+
+.header__subtitle {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 400;
+}
+
+/* ── Connection Badge ──────────────────────────────────────────── */
+.connection-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 0.25rem 0.85rem;
+    border-radius: var(--radius-full);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: var(--border-subtle);
+    background: var(--bg-glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all var(--transition-base);
+}
+
+.connection-badge.connected {
+    color: var(--accent-listening);
+    border-color: rgba(52, 211, 153, 0.25);
+    background: rgba(52, 211, 153, 0.1);
+}
+
+.connection-badge.connecting {
+    color: var(--accent-connecting);
+    border-color: rgba(251, 191, 36, 0.25);
+    background: rgba(251, 191, 36, 0.1);
+}
+
+.connection-badge.disconnected {
+    color: var(--text-muted);
+}
+
+/* ── Microphone Button ─────────────────────────────────────────── */
+.mic-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.5rem 0;
+    touch-action: manipulation;
+}
+
+/* Pulse rings */
+.mic-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    pointer-events: none;
+    transition: all var(--transition-slow);
+}
+
+.mic-ring--1 {
+    width: 140px;
+    height: 140px;
+    opacity: 0;
+}
+
+.mic-ring--2 {
+    width: 175px;
+    height: 175px;
+    opacity: 0;
+}
+
+.mic-ring--3 {
+    width: 210px;
+    height: 210px;
+    opacity: 0;
+}
+
+/* Listening state — green pulse */
+.state-listening .mic-ring--1 {
+    border-color: var(--accent-listening);
+    opacity: 0.35;
+    animation: pulseRing 2s ease-out infinite;
+}
+.state-listening .mic-ring--2 {
+    border-color: var(--accent-listening);
+    opacity: 0.18;
+    animation: pulseRing 2s ease-out infinite 0.4s;
+}
+.state-listening .mic-ring--3 {
+    border-color: var(--accent-listening);
+    opacity: 0.09;
+    animation: pulseRing 2s ease-out infinite 0.8s;
+}
+
+/* Speaking state — purple pulse */
+.state-speaking .mic-ring--1 {
+    border-color: var(--accent-speaking);
+    opacity: 0.35;
+    animation: pulseRing 1.5s ease-out infinite;
+}
+.state-speaking .mic-ring--2 {
+    border-color: var(--accent-speaking);
+    opacity: 0.18;
+    animation: pulseRing 1.5s ease-out infinite 0.3s;
+}
+.state-speaking .mic-ring--3 {
+    border-color: var(--accent-speaking);
+    opacity: 0.09;
+    animation: pulseRing 1.5s ease-out infinite 0.6s;
+}
+
+@keyframes pulseRing {
+    0% {
+        transform: scale(0.85);
+        opacity: 0.45;
+    }
+    100% {
+        transform: scale(1.25);
+        opacity: 0;
+    }
+}
+
+/* The button itself */
+.mic-btn {
+    position: relative;
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0;
+    background: var(--bg-secondary);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-md);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    z-index: 2;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+.mic-btn:active {
+    transform: scale(0.92);
+}
+
+.mic-btn .material-symbols-outlined {
+    font-size: 38px;
+    color: var(--text-secondary);
+    transition: color var(--transition-base);
+}
+
+/* State-specific button styles */
+.mic-btn.state-idle .material-symbols-outlined {
+    color: var(--text-secondary);
+}
+
+.mic-btn.state-connecting {
+    border-color: rgba(251, 191, 36, 0.35);
+    animation: connectingPulse 1.5s ease-in-out infinite;
+}
+.mic-btn.state-connecting .material-symbols-outlined {
+    color: var(--accent-connecting);
+    animation: spin 1.5s linear infinite;
+}
+
+.mic-btn.state-listening {
+    background: rgba(16, 185, 129, 0.12);
+    border-color: rgba(52, 211, 153, 0.5);
+    box-shadow: 0 0 32px var(--accent-listening-glow);
+}
+.mic-btn.state-listening .material-symbols-outlined {
+    color: var(--accent-listening);
+}
+
+.mic-btn.state-speaking {
+    background: rgba(124, 58, 237, 0.12);
+    border-color: rgba(167, 139, 250, 0.5);
+    box-shadow: 0 0 32px var(--accent-speaking-glow);
+}
+.mic-btn.state-speaking .material-symbols-outlined {
+    color: var(--accent-speaking);
+}
+
+.mic-btn.state-error {
+    border-color: rgba(248, 113, 113, 0.4);
+}
+.mic-btn.state-error .material-symbols-outlined {
+    color: var(--accent-error);
+}
+
+@keyframes connectingPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Status Indicator ──────────────────────────────────────────── */
+.status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    transition: color var(--transition-base);
+    text-align: center;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: background var(--transition-base);
+}
+
+.status-dot.online {
+    background: var(--accent-listening);
+    box-shadow: 0 0 8px var(--accent-listening-glow);
+    animation: dotPulse 2s ease-in-out infinite;
+}
+
+.status-dot.connecting {
+    background: var(--accent-connecting);
+    animation: dotPulse 1s ease-in-out infinite;
+}
+
+.status-dot.offline {
+    background: var(--text-muted);
+}
+
+@keyframes dotPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* ── Waveform Canvas ───────────────────────────────────────────── */
+.waveform-container {
+    width: 100%;
+    height: 65px;
+    border-radius: var(--radius-md);
+    background: var(--bg-glass);
+    border: var(--border-subtle);
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.waveform-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* ── Conversation Log ──────────────────────────────────────────── */
+.conversation-log {
+    width: 100%;
+    max-height: 190px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    background: var(--bg-glass);
+    border: var(--border-subtle);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.conversation-log::-webkit-scrollbar {
+    width: 4px;
+}
+
+.conversation-log::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.conversation-log::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
+
+.log-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    word-break: break-word;
+    animation: fadeSlideIn 0.3s ease-out;
+}
+
+.log-entry.bot {
+    background: rgba(99, 102, 241, 0.08);
+    border-left: 3px solid var(--accent-primary);
+}
+
+.log-entry.user {
+    background: rgba(52, 211, 153, 0.08);
+    border-left: 3px solid var(--accent-listening);
+}
+
+.log-label {
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 0.78rem;
+}
+
+.log-content {
+    color: var(--text-primary);
+    font-size: 0.82rem;
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Hint ──────────────────────────────────────────────────────── */
+.hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.hint kbd {
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+}
+
+/* ── Footer ────────────────────────────────────────────────────── */
+.footer {
+    position: relative;
+    margin-top: auto;
+    padding-bottom: 0.5rem;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-align: center;
+    z-index: 1;
+}
+
+.footer a {
+    color: var(--accent-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.footer a:hover {
+    color: var(--accent-speaking);
+}
+
+/* ── Responsive Mobile Optimizations ────────────────────────────── */
+
+/* Small Phones & Portrait (under 480px) */
+@media (max-width: 480px) {
+    .app-container {
+        padding: 1rem 0.85rem;
+        gap: 1rem;
+    }
+
+    .header__title {
+        font-size: 1.35rem;
+    }
+
+    .header__subtitle {
+        font-size: 0.78rem;
+    }
+
+    .mic-btn {
+        width: 96px;
+        height: 96px;
+    }
+
+    .mic-btn .material-symbols-outlined {
+        font-size: 34px;
+    }
+
+    .mic-ring--1 { width: 125px; height: 125px; }
+    .mic-ring--2 { width: 155px; height: 155px; }
+    .mic-ring--3 { width: 185px; height: 185px; }
+
+    .waveform-container {
+        height: 55px;
+    }
+
+    .conversation-log {
+        max-height: 160px;
+        padding: 0.75rem;
+    }
+
+    .log-entry {
+        padding: 0.4rem 0.6rem;
+    }
+
+    .hint kbd {
+        display: none;
+    }
+
+    .hint span.keyboard-hint {
+        display: none;
+    }
+}
+
+/* Extra Small Phones (under 360px) */
+@media (max-width: 360px) {
+    .header__title {
+        font-size: 1.2rem;
+    }
+
+    .mic-btn {
+        width: 86px;
+        height: 86px;
+    }
+
+    .mic-btn .material-symbols-outlined {
+        font-size: 30px;
+    }
+
+    .mic-ring--1 { width: 110px; height: 110px; }
+    .mic-ring--2 { width: 135px; height: 135px; }
+    .mic-ring--3 { width: 160px; height: 160px; }
+
+    .conversation-log {
+        max-height: 130px;
+    }
+}
+
+/* Mobile Landscape & Short Viewports (height under 650px) */
+@media (max-height: 650px) {
+    body {
+        justify-content: flex-start;
+    }
+
+    .app-container {
+        gap: 0.6rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .header {
+        margin-bottom: 0;
+    }
+
+    .header__title {
+        font-size: 1.25rem;
+    }
+
+    .header__subtitle {
+        display: none;
+    }
+
+    .mic-wrapper {
+        margin: 0.2rem 0;
+    }
+
+    .mic-btn {
+        width: 80px;
+        height: 80px;
+    }
+
+    .mic-btn .material-symbols-outlined {
+        font-size: 28px;
+    }
+
+    .mic-ring--1 { width: 105px; height: 105px; }
+    .mic-ring--2 { width: 130px; height: 130px; }
+    .mic-ring--3 { width: 155px; height: 155px; }
+
+    .waveform-container {
+        height: 45px;
+    }
+
+    .conversation-log {
+        max-height: 120px;
+    }
+}

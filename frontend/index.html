@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Mukul Oli — AI Portfolio Voice Bot</title>
+    <meta name="description"
+        content="Talk to Mukul Oli's AI portfolio assistant. Ask about his skills, projects, experience, and more using real-time voice conversation powered by Gemini.">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta property="og:title" content="Mukul Oli — AI Portfolio Voice Bot">
+    <meta property="og:description"
+        content="Real-time AI voice assistant trained on Mukul Oli's resume, projects, and professional experience.">
+    <meta property="og:type" content="website">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,1"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="bg-gradient"></div>
+    <div class="bg-orb bg-orb--1"></div>
+    <div class="bg-orb bg-orb--2"></div>
+    <div class="bg-orb bg-orb--3"></div>
+
+    <!-- Main App -->
+    <main class="app-container" id="app">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="header__title">Mukul Oli's AI Portfolio</h1>
+            <p class="header__subtitle">Real-time voice assistant powered by Gemini</p>
+        </header>
+
+        <!-- Connection Badge -->
+        <span class="connection-badge disconnected" id="connection-badge">Disconnected</span>
+
+        <!-- Microphone Button -->
+        <div class="mic-wrapper">
+            <div class="mic-ring mic-ring--1"></div>
+            <div class="mic-ring mic-ring--2"></div>
+            <div class="mic-ring mic-ring--3"></div>
+
+            <button class="mic-btn state-idle" id="mic-btn" aria-label="Toggle voice conversation">
+                <span class="material-symbols-outlined" id="mic-icon">mic</span>
+            </button>
+        </div>
+
+        <!-- Status -->
+        <div class="status">
+            <span class="status-dot offline" id="status-dot"></span>
+            <span id="status-text">Tap to start conversation</span>
+        </div>
+
+        <!-- Waveform Visualization -->
+        <div class="waveform-container">
+            <canvas class="waveform-canvas" id="waveform-canvas"></canvas>
+        </div>
+
+        <!-- Conversation Log -->
+        <div class="conversation-log" id="conversation-log">
+            <!-- Log entries appear here dynamically -->
+        </div>
+
+        <!-- Hint -->
+        <div class="hint">
+            <span class="keyboard-hint">Press <kbd>Space</kbd> or tap mic to speak</span> • Ask about skills, projects, experience
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        Built with <a href="https://ai.google.dev" target="_blank" rel="noopener">Gemini Live API</a> •
+        <a href="https://fastapi.tiangolo.com" target="_blank" rel="noopener">FastAPI</a> •
+        <a href="https://python.langchain.com" target="_blank" rel="noopener">LangChain</a>
+    </footer>
+
+    <!-- App Script (ES Module) -->
+    <script type="module" src="/static/js/app.js"></script>
+</body>
+
+</html>
