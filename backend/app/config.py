@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     gemini_model: str = os.getenv(
         "GEMINI_MODEL", "gemini-3.1-flash-live-preview"
     )
-    voice_name: str = os.getenv("VOICE_NAME", "Kore")
+    voice_name: str = os.getenv("VOICE_NAME", "Charon")
 
     # Paths
     backend_dir: Path = _backend_dir
