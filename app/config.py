@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     )
     voice_name: str = os.getenv("VOICE_NAME", "Charon")
 
+    # Webhooks
+    booking_webhook_url: str = os.getenv("BOOKING_WEBHOOK_URL", "")
+
     # Paths
     backend_dir: Path = _backend_dir
     data_dir: Path = _backend_dir / "data"

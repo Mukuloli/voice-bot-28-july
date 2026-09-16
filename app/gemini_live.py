@@ -16,6 +16,9 @@ from google.genai import types
 
 from app.config import settings
 from app.prompts import SYSTEM_INSTRUCTION
+from app.tools import book_meeting, BOOK_MEETING_DECLARATION
+
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +49,13 @@ class GeminiLiveSession:
             system_instruction=types.Content(
                 parts=[types.Part(text=SYSTEM_INSTRUCTION)]
             ),
+            tools=[
+                types.Tool(
+                    function_declarations=[
+                        types.FunctionDeclaration(**BOOK_MEETING_DECLARATION)
+                    ]
+                )
+            ],
         )
 
         self._cm = self._client.aio.live.connect(
@@ -136,6 +146,39 @@ class GeminiLiveSession:
                                     yield {"type": "audio", "data": audio_b64}
                                 elif part.text:
                                     yield {"type": "text", "data": part.text}
+
+                    # ── Tool calls ───────────────────────────────────
+                    if response.tool_call is not None:
+                        for fn_call in response.tool_call.function_calls:
+                            logger.info(
+                                "Tool call received: %s(%s)",
+                                fn_call.name,
+                                fn_call.args,
+                            )
+
+                            if fn_call.name == "book_meeting":
+                                result = await book_meeting(**fn_call.args)
+                            else:
+                                result = {
+                                    "status": "error",
+                                    "message": f"Unknown function: {fn_call.name}",
+                                }
+
+                            # Send the function response back to Gemini
+                            await self._session.send_tool_response(
+                                function_responses=[
+                                    types.FunctionResponse(
+                                        name=fn_call.name,
+                                        id=fn_call.id,
+                                        response=result,
+                                    )
+                                ]
+                            )
+                            logger.info(
+                                "Tool response sent for %s: %s",
+                                fn_call.name,
+                                result.get("status", "unknown"),
+                            )
 
                 # If receive() iterator ends for a turn, yield turn complete and wait for next turn
                 await asyncio.sleep(0.01)
