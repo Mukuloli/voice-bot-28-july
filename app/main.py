@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 # ── FastAPI app ──────────────────────────────────────────────────────
 app = FastAPI(
-    title="Voice Bot — Mukul Oli Portfolio Assistant",
+    title="Ayro AI — Voice Assistant",
     version="1.0.0",
 )
 
@@ -158,6 +158,13 @@ async def _client_to_gemini(ws: WebSocket, gemini: GeminiLiveSession):
                 await gemini.send_text(
                     "Please greet the user now. This is the start of the conversation."
                 )
+
+            elif msg_type == "text":
+                # User typed a text message (fallback for unclear voice)
+                user_text = msg.get("data", "")
+                if user_text:
+                    logger.info("Text message from user: %s", user_text)
+                    await gemini.send_text(user_text)
 
             elif msg_type == "stop":
                 logger.info("Client requested stop.")

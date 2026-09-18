@@ -180,6 +180,13 @@ class GeminiLiveSession:
                                 result.get("status", "unknown"),
                             )
 
+                            # Notify frontend about successful booking
+                            if fn_call.name == "book_meeting" and result.get("status") == "success":
+                                yield {
+                                    "type": "booking_confirmed",
+                                    "data": result.get("booking_details", fn_call.args),
+                                }
+
                 # If receive() iterator ends for a turn, yield turn complete and wait for next turn
                 await asyncio.sleep(0.01)
 

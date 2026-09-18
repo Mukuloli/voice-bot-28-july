@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Mukul Oli — AI Portfolio Voice Bot</title>
+    <title>Ayro AI — Voice Assistant</title>
     <meta name="description"
-        content="Talk to Mukul Oli's AI portfolio assistant. Ask about his skills, projects, experience, and more using real-time voice conversation powered by Gemini.">
+        content="Talk to Ayro AI's voice assistant. Learn about AI solutions, discuss your business needs, and schedule a meeting.">
     <meta name="theme-color" content="#0a0a0f">
-    <meta property="og:title" content="Mukul Oli — AI Portfolio Voice Bot">
+    <meta property="og:title" content="Ayro AI — Voice Assistant">
     <meta property="og:description"
-        content="Real-time AI voice assistant trained on Mukul Oli's resume, projects, and professional experience.">
+        content="Real-time AI voice assistant for Ayro AI. Explore AI workforce solutions and book meetings.">
     <meta property="og:type" content="website">
 
     <!-- Fonts -->
@@ -37,7 +37,7 @@
     <main class="app-container" id="app">
         <!-- Header -->
         <header class="header">
-            <h1 class="header__title">Mukul Oli's AI Portfolio</h1>
+            <h1 class="header__title">Ayro AI Voice Assistant</h1>
             <p class="header__subtitle">Real-time voice assistant powered by Gemini</p>
         </header>
 
@@ -71,17 +71,34 @@
             <!-- Log entries appear here dynamically -->
         </div>
 
+        <!-- Text Input (for when voice is unclear) -->
+        <div class="text-input-container" id="text-input-container">
+            <form class="text-input-form" id="text-input-form">
+                <input type="text" class="text-input" id="text-input"
+                    placeholder="Type here if voice isn't clear..."
+                    autocomplete="off" disabled>
+                <button type="submit" class="text-send-btn" id="text-send-btn" disabled
+                    aria-label="Send text message">
+                    <span class="material-symbols-outlined">send</span>
+                </button>
+            </form>
+        </div>
+
         <!-- Hint -->
         <div class="hint">
-            <span class="keyboard-hint">Press <kbd>Space</kbd> or tap mic to speak</span> • Ask about skills, projects, experience
+            <span class="keyboard-hint">Press <kbd>Space</kbd> or tap mic to speak</span> • Ask about AI solutions or
+            book a meeting
         </div>
     </main>
+
+    <!-- Booking Confirmation Toast -->
+    <div class="toast-container" id="toast-container"></div>
 
     <!-- Footer -->
     <footer class="footer">
         Built with <a href="https://ai.google.dev" target="_blank" rel="noopener">Gemini Live API</a> •
         <a href="https://fastapi.tiangolo.com" target="_blank" rel="noopener">FastAPI</a> •
-        <a href="https://python.langchain.com" target="_blank" rel="noopener">LangChain</a>
+        Powered by <strong>Ayro AI</strong>
     </footer>
 
     <!-- App Script (ES Module) -->

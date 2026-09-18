@@ -2,7 +2,7 @@
  * Voice Bot — Main Application Controller
  *
  * Manages the UI state machine, WebSocket lifecycle,
- * waveform visualization, and user interactions.
+ * waveform visualization, text input, and user interactions.
  */
 import { AudioStreamer } from "./audio-streamer.js";
 import { AudioPlayer } from "./audio-player.js";
@@ -25,6 +25,10 @@ const connectionBadge = document.getElementById("connection-badge");
 const canvas = document.getElementById("waveform-canvas");
 const logContainer = document.getElementById("conversation-log");
 const ctx = canvas.getContext("2d");
+const textInput = document.getElementById("text-input");
+const textSendBtn = document.getElementById("text-send-btn");
+const textForm = document.getElementById("text-input-form");
+const toastContainer = document.getElementById("toast-container");
 
 // ── Audio Modules ───────────────────────────────────────────────────
 const streamer = new AudioStreamer();
@@ -53,6 +57,11 @@ function updateUI() {
         "state-speaking", "state-error"
     );
     micBtn.classList.add(`state-${currentState}`);
+
+    // Enable/disable text input based on connection
+    const isConnected = currentState === State.LISTENING || currentState === State.SPEAKING;
+    textInput.disabled = !isConnected;
+    textSendBtn.disabled = !isConnected;
 
     switch (currentState) {
         case State.IDLE:
@@ -115,6 +124,36 @@ function addLogEntry(sender, text) {
     entry.appendChild(content);
     logContainer.appendChild(entry);
     logContainer.scrollTop = logContainer.scrollHeight;
+}
+
+// ── Toast Notification ──────────────────────────────────────────────
+
+function showToast(title, message) {
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.innerHTML = `
+        <span class="toast-icon">✅</span>
+        <div class="toast-body">
+            <div class="toast-title">${title}</div>
+            <div class="toast-message">${message}</div>
+        </div>
+        <button class="toast-close" aria-label="Close">&times;</button>
+    `;
+
+    toast.querySelector(".toast-close").addEventListener("click", () => {
+        toast.classList.add("toast-removing");
+        setTimeout(() => toast.remove(), 300);
+    });
+
+    toastContainer.appendChild(toast);
+
+    // Auto-remove after 8 seconds
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.classList.add("toast-removing");
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, 8000);
 }
 
 // ── WebSocket Management ────────────────────────────────────────────
@@ -183,6 +222,18 @@ function handleServerMessage(msg) {
             setState(State.LISTENING);
             break;
 
+        case "booking_confirmed":
+            // Show booking toast notification
+            {
+                const details = [
+                    msg.data.customer_name,
+                    msg.data.interest ? `(${msg.data.interest})` : "",
+                    `— ${msg.data.date} at ${msg.data.time}`,
+                ].filter(Boolean).join(" ");
+                showToast("🎉 Meeting Booked!", details);
+            }
+            break;
+
         case "error":
             console.error("[Server Error]", msg.data);
             addLogEntry("bot", `⚠️ Error: ${msg.data}`);
@@ -231,6 +282,27 @@ async function cleanup() {
         ws.close();
         ws = null;
     }
+}
+
+// ── Text Input ──────────────────────────────────────────────────────
+
+textForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    sendTextMessage();
+});
+
+function sendTextMessage() {
+    const text = textInput.value.trim();
+    if (!text || !ws || ws.readyState !== WebSocket.OPEN) return;
+
+    // Send text message to server
+    ws.send(JSON.stringify({ type: "text", data: text }));
+
+    // Show in conversation log
+    addLogEntry("user", text);
+
+    // Clear input
+    textInput.value = "";
 }
 
 // ── Microphone Button ───────────────────────────────────────────────
@@ -323,6 +395,9 @@ function stopVisualization() {
 // ── Keyboard shortcut (Space to toggle) ─────────────────────────────
 
 document.addEventListener("keydown", (e) => {
+    // Don't trigger mic toggle if user is typing in text input
+    if (e.target === textInput) return;
+
     if (e.code === "Space" && e.target === document.body) {
         e.preventDefault();
         micBtn.click();

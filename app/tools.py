@@ -21,23 +21,25 @@ async def book_meeting(
     booking_id: str,
     customer_name: str,
     email: str,
-    check_in: str,
-    check_out: str,
+    phone: str,
+    interest: str,
+    date: str,
+    time: str,
+    meeting_purpose: str,
 ) -> dict:
     """
-    Book a hotel meeting/room by sending the booking details to the
-    EasyWay booking webhook.
-
-    This function is called by the voice agent when a customer wants to
-    make a hotel booking. It sends the booking payload to the n8n webhook
-    endpoint and returns the result.
+    Schedule a meeting with the Ayro AI team by sending booking details
+    to the webhook endpoint.
 
     Args:
         booking_id: Unique booking identifier (e.g. "BK0008").
-        customer_name: Full name of the customer making the booking.
-        email: Customer's email address for booking confirmation.
-        check_in: Check-in date in YYYY-MM-DD format (e.g. "2026-09-20").
-        check_out: Check-out date in YYYY-MM-DD format (e.g. "2026-09-22").
+        customer_name: Full name of the person requesting the meeting.
+        email: Email address for meeting confirmation.
+        phone: Contact phone number of the customer.
+        interest: Solution/area of interest (e.g. "Voice AI", "Sales Automation").
+        date: Meeting date in YYYY-MM-DD format (e.g. "2026-09-20").
+        time: Meeting time in HH:MM format (e.g. "14:30").
+        meeting_purpose: Purpose or objective of the meeting.
 
     Returns:
         A dict with the booking status and any response from the webhook.
@@ -46,30 +48,25 @@ async def book_meeting(
         "booking_id": booking_id,
         "customer_name": customer_name,
         "email": email,
-        "check_in": check_in,
-        "check_out": check_out,
+        "phone": phone,
+        "interest": interest,
+        "date": date,
+        "time": time,
+        "meeting_purpose": meeting_purpose,
     }
 
     logger.info(
-        "Calling booking webhook: booking_id=%s, customer=%s, check_in=%s, check_out=%s",
+        "Calling booking webhook: booking_id=%s, customer=%s, phone=%s, interest=%s, purpose=%s, date=%s, time=%s",
         booking_id,
         customer_name,
-        check_in,
-        check_out,
+        phone,
+        interest,
+        meeting_purpose,
+        date,
+        time,
     )
 
-    # ── Clear terminal output ────────────────────────────────────────
-    print("\n" + "=" * 60)
-    print("📤  SENDING TO WEBHOOK")
-    print("=" * 60)
-    print(f"  URL        : {BOOKING_WEBHOOK_URL}")
-    print(f"  booking_id : {booking_id}")
-    print(f"  customer   : {customer_name}")
-    print(f"  email      : {email}")
-    print(f"  check_in   : {check_in}")
-    print(f"  check_out  : {check_out}")
-    print(f"  payload    : {json.dumps(payload, indent=2)}")
-    print("=" * 60 + "\n")
+
 
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
@@ -79,12 +76,7 @@ async def book_meeting(
                 headers={"Content-Type": "application/json"},
             )
 
-        # ── Print response ───────────────────────────────────────────
-        print("\n" + "=" * 60)
-        print(f"📥  WEBHOOK RESPONSE  (status: {response.status_code})")
-        print("=" * 60)
-        print(f"  {response.text}")
-        print("=" * 60 + "\n")
+
 
         if response.status_code == 200:
             logger.info("Booking webhook returned 200 OK for %s", booking_id)
@@ -94,7 +86,8 @@ async def book_meeting(
                 result = response.text
             return {
                 "status": "success",
-                "message": f"Booking {booking_id} confirmed successfully for {customer_name}.",
+                "message": f"Meeting {booking_id} confirmed successfully for {customer_name} on {date} at {time}.",
+                "booking_details": payload,
                 "webhook_response": result,
             }
         else:
@@ -128,10 +121,10 @@ async def book_meeting(
 BOOK_MEETING_DECLARATION = {
     "name": "book_meeting",
     "description": (
-        "Book a hotel room or meeting for a customer. "
-        "Call this function when the customer wants to make a hotel booking. "
-        "Collect the customer's name, email address, preferred check-in date, "
-        "and check-out date before calling this function. "
+        "Schedule a meeting with the Ayro AI team for a potential customer. "
+        "IMPORTANT: Only call this function AFTER you have read back ALL the collected details "
+        "(name, email, phone, interest, meeting_purpose, date, time) to the user and the user has explicitly confirmed that "
+        "the information is correct. Never call this function without user confirmation. "
         "Generate a unique booking ID in the format 'BK' followed by 4 digits (e.g. BK0009)."
     ),
     "parameters": {
@@ -143,21 +136,42 @@ BOOK_MEETING_DECLARATION = {
             },
             "customer_name": {
                 "type": "string",
-                "description": "Full name of the customer making the booking.",
+                "description": "Full name of the person requesting the meeting.",
             },
             "email": {
                 "type": "string",
-                "description": "Customer's email address for booking confirmation.",
+                "description": "Email address for sending the meeting confirmation.",
             },
-            "check_in": {
+            "phone": {
                 "type": "string",
-                "description": "Check-in date in YYYY-MM-DD format, e.g. '2026-09-20'.",
+                "description": "Contact phone or mobile number of the customer.",
             },
-            "check_out": {
+            "interest": {
                 "type": "string",
-                "description": "Check-out date in YYYY-MM-DD format, e.g. '2026-09-22'.",
+                "description": "The AI solution or area of interest (e.g. 'Voice AI', 'Customer Support Automation', 'Sales AI', 'Business Process Automation').",
+            },
+            "date": {
+                "type": "string",
+                "description": "Meeting date in YYYY-MM-DD format, e.g. '2026-09-20'.",
+            },
+            "time": {
+                "type": "string",
+                "description": "Meeting time in HH:MM format (24-hour), e.g. '14:30'.",
+            },
+            "meeting_purpose": {
+                "type": "string",
+                "description": "Purpose or reason for the meeting (e.g. 'Discussion on building a voice bot for appointment scheduling').",
             },
         },
-        "required": ["booking_id", "customer_name", "email", "check_in", "check_out"],
+        "required": [
+            "booking_id",
+            "customer_name",
+            "email",
+            "phone",
+            "interest",
+            "date",
+            "time",
+            "meeting_purpose",
+        ],
     },
 }
