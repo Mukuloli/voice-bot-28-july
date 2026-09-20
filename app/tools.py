@@ -7,6 +7,7 @@ such as booking meetings via external webhook integrations.
 
 import logging
 from urllib.parse import urlparse
+from uuid import uuid4
 
 import httpx
 
@@ -15,8 +16,8 @@ logger = logging.getLogger(__name__)
 # ── Webhook Configuration ────────────────────────────────────────────
 from app.config import settings
 
+
 async def book_meeting(
-    booking_id: str,
     customer_name: str,
     email: str,
     phone: str,
@@ -30,7 +31,6 @@ async def book_meeting(
     to the webhook endpoint.
 
     Args:
-        booking_id: Unique booking identifier (e.g. "BK0008").
         customer_name: Full name of the person requesting the meeting.
         email: Email address for meeting confirmation.
         phone: Contact phone number of the customer.
@@ -42,6 +42,10 @@ async def book_meeting(
     Returns:
         A dict with the booking status and any response from the webhook.
     """
+    # Booking IDs must not come from the language model: short model-generated
+    # IDs can repeat and overwrite an existing Firebase document.
+    booking_id = f"BK-{uuid4().hex.upper()}"
+
     payload = {
         "booking_id": booking_id,
         "customer_name": customer_name,
@@ -135,15 +139,11 @@ BOOK_MEETING_DECLARATION = {
         "IMPORTANT: Only call this function AFTER you have read back ALL the collected details "
         "(name, email, phone, interest, meeting_purpose, date, time) to the user and the user has explicitly confirmed that "
         "the information is correct. Never call this function without user confirmation. "
-        "Generate a unique booking ID in the format 'BK' followed by 4 digits (e.g. BK0009)."
+        "The booking ID is generated securely by the backend."
     ),
     "parameters": {
         "type": "object",
         "properties": {
-            "booking_id": {
-                "type": "string",
-                "description": "Unique booking identifier in the format 'BK' followed by 4 digits, e.g. 'BK0008'. Generate this automatically.",
-            },
             "customer_name": {
                 "type": "string",
                 "description": "Full name of the person requesting the meeting.",
@@ -174,7 +174,6 @@ BOOK_MEETING_DECLARATION = {
             },
         },
         "required": [
-            "booking_id",
             "customer_name",
             "email",
             "phone",
