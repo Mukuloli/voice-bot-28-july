@@ -106,6 +106,7 @@ voice-bot-28/
 | `GEMINI_API_KEY` | — | Your Google Gemini API key |
 | `GEMINI_MODEL` | `gemini-2.5-flash-preview-native-audio-dialog` | Gemini Live API model |
 | `VOICE_NAME` | `Kore` | Voice: Puck, Charon, Kore, Fenrir, Aoede |
+| `BOOKING_WEBHOOK_URL` | — | Production n8n booking webhook URL |
 
 ## 📝 Customizing the Knowledge Base
 

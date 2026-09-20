@@ -5,17 +5,15 @@ Contains callable tools that the voice agent can invoke during conversation,
 such as booking meetings via external webhook integrations.
 """
 
-import json
 import logging
+from urllib.parse import urlparse
+
 import httpx
 
 logger = logging.getLogger(__name__)
 
 # ── Webhook Configuration ────────────────────────────────────────────
 from app.config import settings
-
-BOOKING_WEBHOOK_URL = settings.booking_webhook_url
-
 
 async def book_meeting(
     booking_id: str,
@@ -66,20 +64,28 @@ async def book_meeting(
         time,
     )
 
-
+    webhook_url = settings.booking_webhook_url.strip()
+    parsed_url = urlparse(webhook_url)
+    if parsed_url.scheme not in {"http", "https"} or not parsed_url.netloc:
+        logger.error("BOOKING_WEBHOOK_URL is missing or invalid")
+        return {
+            "status": "error",
+            "message": "The booking service is not configured. Please contact support.",
+        }
 
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
             response = await client.post(
-                BOOKING_WEBHOOK_URL,
+                webhook_url,
                 json=payload,
-                headers={"Content-Type": "application/json"},
             )
 
-
-
-        if response.status_code == 200:
-            logger.info("Booking webhook returned 200 OK for %s", booking_id)
+        if response.is_success:
+            logger.info(
+                "Booking webhook returned status %s for %s",
+                response.status_code,
+                booking_id,
+            )
             try:
                 result = response.json()
             except Exception:
@@ -109,11 +115,15 @@ async def book_meeting(
             "status": "error",
             "message": "The booking service timed out. Please try again.",
         }
-    except Exception as e:
-        logger.error("Booking webhook error for %s: %s", booking_id, e)
+    except httpx.RequestError as exc:
+        logger.error(
+            "Could not reach booking webhook for %s: %s",
+            booking_id,
+            exc,
+        )
         return {
             "status": "error",
-            "message": f"An error occurred while processing the booking: {str(e)}",
+            "message": "The booking service could not be reached. Please try again.",
         }
 
 

@@ -9,4 +9,5 @@ services:
         value: gemini-3.1-flash-live-preview
       - key: VOICE_NAME
         value: Kore
-
+      - key: BOOKING_WEBHOOK_URL
+        sync: false
