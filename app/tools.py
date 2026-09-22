@@ -48,7 +48,7 @@ async def book_meeting(
 
     payload = {
         "booking_id": booking_id,
-        "customer": customer_name,
+        "customer_name": customer_name,
         "email": email,
         "phone": phone,
         "interest": interest,
